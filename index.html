@@ -1,43 +1,36 @@
 <script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+      return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+    if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+        try {
+            var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+            var firstSheetName = workbook.SheetNames[0];
+            var worksheet = workbook.Sheets[firstSheetName];
+            var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+            var filteredData = jsonData.filter(row => row.some(filledCell));
+            var headerRowIndex = filteredData.findIndex((row, index) =>
+              row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+            );
+            if (headerRowIndex === -1 || headerRowIndex > 25) {
+              headerRowIndex = 0;
             }
+            var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+            csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+            return csv;
+        } catch (e) {
+            console.error(e);
+            return "";
         }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+    }
+    return gk_fileData[filename] || "";
+    }
+</script>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -88,19 +81,30 @@
     <section class="bg-gray-200 py-16">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold text-center mb-8">Our Services</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-white p-6 rounded shadow">
-                    <h3 class="text-xl font-semibold mb-4">Facility Management</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Facility Management -->
+                <a href="pages/services/facility-management.html" class="block bg-white p-6 rounded shadow hover:shadow-lg transition duration-300">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-900">Facility Management</h3>
                     <p class="text-gray-600">Comprehensive facility management services to keep your operations running smoothly.</p>
-                </div>
-                <div class="bg-white p-6 rounded shadow">
-                    <h3 class="text-xl font-semibold mb-4">Catering Services</h3>
+                </a>
+
+                <!-- Catering Services -->
+                <a href="pages/services/catering-services.html" class="block bg-white p-6 rounded shadow hover:shadow-lg transition duration-300">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-900">Catering Services</h3>
                     <p class="text-gray-600">High-quality catering solutions for remote and urban locations.</p>
-                </div>
-                <div class="bg-white p-6 rounded shadow">
-                    <h3 class="text-xl font-semibold mb-4">Support Services</h3>
+                </a>
+
+                <!-- Housekeeping -->
+                <a href="pages/services/housekeeping.html" class="block bg-white p-6 rounded shadow hover:shadow-lg transition duration-300">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-900">Housekeeping</h3>
+                    <p class="text-gray-600">Reliable housekeeping services to maintain clean, comfortable environments.</p>
+                </a>
+
+                <!-- Support Services -->
+                <a href="pages/services/support-services.html" class="block bg-white p-6 rounded shadow hover:shadow-lg transition duration-300">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-900">Support Services</h3>
                     <p class="text-gray-600">Customized support services to meet your unique requirements.</p>
-                </div>
+                </a>
             </div>
         </div>
     </section>
@@ -122,3 +126,4 @@
     <script src="js/script.js"></script>
 </body>
 </html>
+
