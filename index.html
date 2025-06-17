@@ -1,0 +1,124 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESS Support Services</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Navigation -->
+    <nav class="bg-blue-900 text-white p-4 sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold">ESS Support Services</a>
+            <button id="menu-toggle" class="md:hidden focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <ul id="nav-menu" class="hidden md:flex space-x-6">
+                <li><a href="index.html" class="hover:text-blue-300">Home</a></li>
+                <li><a href="pages/about.html" class="hover:text-blue-300">About Us</a></li>
+                <li><a href="pages/services.html" class="hover:text-blue-300">Services</a></li>
+                <li><a href="pages/locations.html" class="hover:text-blue-300">Locations</a></li>
+                <li><a href="pages/careers.html" class="hover:text-blue-300">Careers</a></li>
+                <li><a href="pages/contact.html" class="hover:text-blue-300">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-blue-800 text-white py-20">
+        <div class="container mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Welcome to ESS Support Services</h1>
+            <p class="text-lg mb-6">Providing exceptional support services across Canada.</p>
+            <a href="pages/services.html" class="bg-yellow-500 text-black px-6 py-3 rounded hover:bg-yellow-600">Our Services</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">About Us</h2>
+            <p class="text-lg text-gray-700 max-w-2xl mx-auto">ESS Support Services is a leading provider of facility management, catering, and support services in Canada. We are committed to delivering high-quality solutions tailored to our clients' needs.</p>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="bg-gray-200 py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">Our Services</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded shadow">
+                    <h3 class="text-xl font-semibold mb-4">Facility Management</h3>
+                    <p class="text-gray-600">Comprehensive facility management services to keep your operations running smoothly.</p>
+                </div>
+                <div class="bg-white p-6 rounded shadow">
+                    <h3 class="text-xl font-semibold mb-4">Catering Services</h3>
+                    <p class="text-gray-600">High-quality catering solutions for remote and urban locations.</p>
+                </div>
+                <div class="bg-white p-6 rounded shadow">
+                    <h3 class="text-xl font-semibold mb-4">Support Services</h3>
+                    <p class="text-gray-600">Customized support services to meet your unique requirements.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-blue-900 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 ESS Support Services. All rights reserved.</p>
+            <ul class="flex justify-center space-x-4 mt-4">
+                <li><a href="pages/about.html" class="hover:text-blue-300">About</a></li>
+                <li><a href="pages/services.html" class="hover:text-blue-300">Services</a></li>
+                <li><a href="pages/locations.html" class="hover:text-blue-300">Locations</a></li>
+                <li><a href="pages/careers.html" class="hover:text-blue-300">Careers</a></li>
+                <li><a href="pages/contact.html" class="hover:text-blue-300">Contact</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
