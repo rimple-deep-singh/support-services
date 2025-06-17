@@ -1,0 +1,7 @@
+/* Custom styles to complement Tailwind */
+nav ul li a.active {
+    @apply text-yellow-500 font-semibold;
+}
+#menu-toggle.active svg {
+    @apply rotate-180;
+}
